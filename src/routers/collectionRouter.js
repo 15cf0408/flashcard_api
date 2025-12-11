@@ -12,11 +12,11 @@ import { authenticateToken } from '../middleware/authenticateToken.js';
 const router = express.Router();
 
 router.use(authenticateToken);
-router.post('/collection', createCollection);
-router.get('/collection/my', getMyCollections);
-router.get('/collection/search', searchPublicCollections);
-router.get('/collection/:id', getCollectionById);
-router.put('/collection/:id', updateCollection);
-router.delete('/collection/:id', deleteCollection);
+router.post('/', createCollection);
+router.get('/my', getMyCollections);
+router.get('/search', searchPublicCollections);
+router.get('/:id', getCollectionById);
+router.put('/:id', updateCollection);
+router.delete('/:id', deleteCollection);
 
 export default router;
