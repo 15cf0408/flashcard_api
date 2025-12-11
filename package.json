@@ -14,18 +14,21 @@
   "version": "1.0.0",
   "type": "module",
   "main": "server.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "drizzle-kit": "^0.31.8"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/server.js",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "node src/db/seed.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/15cf0408/flashcard_api.git"
   },
-  "author": "Tom HOULLEGATTE, CHOLOT Tom, RAMDANE Nassim",
+  "author": "HOULLEGATTE Tom , CHOLOT Tom, RAMDANE Nassim",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/15cf0408/flashcard_api/issues"
