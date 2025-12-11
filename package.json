@@ -1,0 +1,30 @@
+{
+  "dependencies": {
+    "@libsql/client": "^0.15.15",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.45.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "nodemon": "^3.1.11",
+    "zod": "^4.1.13"
+  },
+  "name": "flashcard_api",
+  "description": "API RESTful de gestion de flashcards pour réviser",
+  "version": "1.0.0",
+  "main": "server.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/15cf0408/flashcard_api.git"
+  },
+  "author": "Tom HOULLEGATTE, CHOLOT Tom, RAMDANE Nassim",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/15cf0408/flashcard_api/issues"
+  },
+  "homepage": "https://github.com/15cf0408/flashcard_api#readme"
+}
