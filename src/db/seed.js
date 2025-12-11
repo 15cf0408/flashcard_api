@@ -162,10 +162,10 @@ async function seed() {
     ]
 
     await db.transaction(async (tx) => {
-        // await tx.delete(study)
-        // await tx.delete(flashcard)
-        // await tx.delete(collection)
-        // await tx.delete(user)
+        await tx.delete(study)
+        await tx.delete(flashcard)
+        await tx.delete(collection)
+        await tx.delete(user)
 
         await tx.insert(user).values(users)
         await tx.insert(collection).values(collections)
