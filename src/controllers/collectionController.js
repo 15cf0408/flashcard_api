@@ -9,13 +9,9 @@ import { eq, and, like } from 'drizzle-orm';
  */
 export const createCollection = async (req, res) => {
     try {
-        const { title, description, is_public } = req.body;
-        const userId = req.user.userId;
-
-        // Validation
-        if (!title || title.trim() === '') {
-            return res.status(400).json({ error: 'Title is required' });
-        }
+        const { title, description, is_public } = req.validatedBody || req.body;
+        const userId = req.auth?.sub;
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
         const newCollection = await db.insert(collection).values({
             owner_id: userId,
@@ -42,8 +38,8 @@ export const createCollection = async (req, res) => {
 export const getCollectionById = async (req, res) => {
     try {
         const { id } = req.params;
-        const userId = req.user.userId;
-        const isAdmin = req.user.isAdmin;
+        const userId = req.auth?.sub;
+        const isAdmin = req.auth?.is_admin;
 
         const result = await db
             .select()
@@ -78,7 +74,8 @@ export const getCollectionById = async (req, res) => {
  */
 export const getMyCollections = async (req, res) => {
     try {
-        const userId = req.user.userId;
+        const userId = req.auth?.sub;
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
         const myCollections = await db
             .select()
@@ -136,8 +133,9 @@ export const searchPublicCollections = async (req, res) => {
 export const updateCollection = async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, description, is_public } = req.body;
-        const userId = req.user.userId;
+        const { title, description, is_public } = req.validatedBody || req.body;
+        const userId = req.auth?.sub;
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
         // Vérifier que la collection existe et appartient à l'utilisateur
         const result = await db
@@ -160,11 +158,6 @@ export const updateCollection = async (req, res) => {
         if (title !== undefined) updateData.title = title.trim();
         if (description !== undefined) updateData.description = description.trim();
         if (is_public !== undefined) updateData.is_public = is_public;
-
-        // Vérifier qu'il y a au moins une modification
-        if (Object.keys(updateData).length === 0) {
-            return res.status(400).json({ error: 'No modifications provided' });
-        }
 
         const updated = await db
             .update(collection)
@@ -191,7 +184,8 @@ export const updateCollection = async (req, res) => {
 export const deleteCollection = async (req, res) => {
     try {
         const { id } = req.params;
-        const userId = req.user.userId;
+        const userId = req.auth?.sub;
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
         // Vérifier que la collection existe et appartient à l'utilisateur
         const result = await db
