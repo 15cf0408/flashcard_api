@@ -161,11 +161,6 @@ export const updateCollection = async (req, res) => {
         if (description !== undefined) updateData.description = description.trim();
         if (is_public !== undefined) updateData.is_public = is_public;
 
-        // Vérifier qu'il y a au moins une modification
-        if (Object.keys(updateData).length === 0) {
-            return res.status(400).json({ error: 'No modifications provided' });
-        }
-
         const updated = await db
             .update(collection)
             .set(updateData)
