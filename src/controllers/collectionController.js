@@ -10,7 +10,7 @@ import { eq, and, like } from 'drizzle-orm';
 export const createCollection = async (req, res) => {
     try {
         const { title, description, is_public } = req.body;
-        const userId = req.user.userId;
+        const userId = req.auth.sub;
 
         // Validation
         if (!title || title.trim() === '') {
@@ -42,8 +42,8 @@ export const createCollection = async (req, res) => {
 export const getCollectionById = async (req, res) => {
     try {
         const { id } = req.params;
-        const userId = req.user.userId;
-        const isAdmin = req.user.isAdmin;
+        const userId = req.auth.sub;
+        const isAdmin = req.auth.is_admin;
 
         const result = await db
             .select()
@@ -78,7 +78,7 @@ export const getCollectionById = async (req, res) => {
  */
 export const getMyCollections = async (req, res) => {
     try {
-        const userId = req.user.userId;
+        const userId = req.auth.sub;
 
         const myCollections = await db
             .select()
@@ -137,7 +137,7 @@ export const updateCollection = async (req, res) => {
     try {
         const { id } = req.params;
         const { title, description, is_public } = req.body;
-        const userId = req.user.userId;
+        const userId = req.auth.sub;
 
         // Vérifier que la collection existe et appartient à l'utilisateur
         const result = await db
@@ -191,7 +191,7 @@ export const updateCollection = async (req, res) => {
 export const deleteCollection = async (req, res) => {
     try {
         const { id } = req.params;
-        const userId = req.user.userId;
+        const userId = req.auth.sub;
 
         // Vérifier que la collection existe et appartient à l'utilisateur
         const result = await db
