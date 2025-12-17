@@ -15,3 +15,14 @@ export const createFlashCardSchema = z.object({
 export const questionIdSchema = z.object({
     id: z.uuid(),
 });
+
+export const updateFlashCardSchema = z.object({
+    textFront: z.string().min(1).max(510).optional(),
+    textBack: z.string().min(1).max(510).optional(),
+    URLFront: z.string().url().optional(),
+    URLBack: z.string().url().optional(),
+});
+
+export const reviewFlashCardSchema = z.object({
+    correct: z.boolean(),
+});
