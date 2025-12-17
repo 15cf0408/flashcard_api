@@ -172,7 +172,7 @@ async function seed() {
         await tx.insert(flashcard).values(flashcards)
         await tx.insert(study).values(studies)
     })
-
+    
     console.log('Seeding completed.')
 }
 
