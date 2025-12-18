@@ -3,7 +3,7 @@ import { collection, user } from '../db/schema.js';
 import { eq, and, like } from 'drizzle-orm';
 
 /**
- * Créer une collection
+ * Create a collection
  * @param {*} req 
  * @param {*} res  
  */
@@ -35,7 +35,7 @@ export const createCollection = async (req, res) => {
 };
 
 /**
- * Consulter une collection par ID
+ * Consult collection by ID
  * @param {*} req 
  * @param {*} res  
  */
@@ -56,8 +56,8 @@ export const getCollectionById = async (req, res) => {
 
         const collectionData = result[0];
 
-        // Vérifier les permissions
-        // Collection privée : accessible uniquement au propriétaire ou admin
+        // Verified permission
+        // Collection private : accessible only for owner or admin
         if (!collectionData.is_public) {
             if (collectionData.owner_id !== userId && !isAdmin) {
                 return res.status(403).json({ error: 'Access denied: this collection is private' });
@@ -72,7 +72,7 @@ export const getCollectionById = async (req, res) => {
 };
 
 /**
- * Lister ses propres collections
+ * List your own collections
  * @param {*} req 
  * @param {*} res 
  */
@@ -96,13 +96,13 @@ export const getMyCollections = async (req, res) => {
 };
 
 /**
- * Rechercher des collections publiques par titre
+ * Search public collections by title
  * @param {*} req 
  * @param {*} res 
  */
 export const searchPublicCollections = async (req, res) => {
     try {
-        const { q } = req.query; // ?q=terme_recherche
+        const { q } = req.query; // ?q=search_term
 
         if (!q || q.trim() === '') {
             return res.status(400).json({ error: 'Missing search parameter' });
@@ -129,7 +129,7 @@ export const searchPublicCollections = async (req, res) => {
 };
 
 /**
- * Modifier une collection par ID si l'utilisateur est le propriétaire
+ * Modify a collection by ID if the user is the owner
  * @param {*} req 
  * @param {*} res 
  */
@@ -139,7 +139,7 @@ export const updateCollection = async (req, res) => {
         const { title, description, is_public } = req.body;
         const userId = req.auth.sub;
 
-        // Vérifier que la collection existe et appartient à l'utilisateur
+        // Check that the collection exists and belongs to the user
         const result = await db
             .select()
             .from(collection)
@@ -155,7 +155,7 @@ export const updateCollection = async (req, res) => {
             return res.status(403).json({ error: 'Access denied: you are not the owner of this collection' });
         }
 
-        // Préparer les données de mise à jour
+        // Prepare the update data
         const updateData = {};
         if (title !== undefined) updateData.title = title.trim();
         if (description !== undefined) updateData.description = description.trim();
@@ -178,7 +178,7 @@ export const updateCollection = async (req, res) => {
 };
 
 /**
- * Supprimer une collection par ID si l'utilisateur est le propriétaire
+ * Delete a collection by ID if the user is the owner
  * @param {*} req
  * @param {*} res
  * /
@@ -188,7 +188,7 @@ export const deleteCollection = async (req, res) => {
         const { id } = req.params;
         const userId = req.auth.sub;
 
-        // Vérifier que la collection existe et appartient à l'utilisateur
+        // Check that the collection exists and belongs to the user
         const result = await db
             .select()
             .from(collection)
@@ -204,7 +204,7 @@ export const deleteCollection = async (req, res) => {
             return res.status(403).json({ error: 'Access denied: you are not the owner of this collection' });
         }
 
-        // Supprimer la collection (les flashcards seront supprimées en cascade)
+        // Delete the collection (the flashcards will be deleted as well)
         await db.delete(collection).where(eq(collection.id, id));
 
         res.status(200).json({

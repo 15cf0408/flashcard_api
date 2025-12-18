@@ -25,7 +25,7 @@ export const register = async (req, res) => {
     const normalizedEmail = email.toLowerCase()
     const existing = await db.select().from(user).where(eq(user.email, normalizedEmail))
     if (existing.length) {
-      return res.status(409).json({ message: 'Email deja utilise' })
+      return res.status(409).json({ message: 'Email already used.' })
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -43,7 +43,7 @@ export const register = async (req, res) => {
     return res.status(201).json({ user: sanitizeUser(created), token })
   } catch (error) {
     console.error('Erreur inscription:', error)
-    return res.status(500).json({ message: 'Erreur serveur' })
+    return res.status(500).json({ message: 'Server error.' })
   }
 }
 
@@ -55,19 +55,19 @@ export const login = async (req, res) => {
     const normalizedEmail = email.toLowerCase()
     const [existing] = await db.select().from(user).where(eq(user.email, normalizedEmail))
     if (!existing) {
-      return res.status(401).json({ message: 'Identifiants invalides' })
+      return res.status(401).json({ message: 'Invalid credentials.' })
     }
 
     const passwordOk = await bcrypt.compare(password, existing.password)
     if (!passwordOk) {
-      return res.status(401).json({ message: 'Identifiants invalides' })
+      return res.status(401).json({ message: 'Invalid credentials.' })
     }
 
     const token = signToken(existing)
     return res.json({ user: sanitizeUser(existing), token })
   } catch (error) {
-    console.error('Erreur connexion:', error)
-    return res.status(500).json({ message: 'Erreur serveur' })
+    console.error('Connection error :', error)
+    return res.status(500).json({ message: 'Server error.' })
   }
 }
 
@@ -76,11 +76,11 @@ export const currentUser = async (req, res) => {
   try {
     const [current] = await db.select().from(user).where(eq(user.id, req.auth.sub))
     if (!current) {
-      return res.status(404).json({ message: 'Utilisateur introuvable' })
+      return res.status(404).json({ message: 'User not found' })
     }
     return res.json({ user: sanitizeUser(current) })
   } catch (error) {
-    console.error('Erreur recuperation profil:', error)
-    return res.status(500).json({ message: 'Erreur serveur' })
+    console.error('Profile retrieval error :', error)
+    return res.status(500).json({ message: 'Server error.' })
   }
 }
