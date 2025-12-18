@@ -13,7 +13,7 @@ export const createFlashCard = async (req, res) => {
     try {
         const { textFront, textBack, URLFront, URLBack, collectionID } = req.validatedBody || req.body;
         const userId = req.auth?.sub;
-        console.log(textFront, textBack, URLFront, URLBack, collectionID,userId);
+
         if (!userId) return res.status(401).json({ error: 'Unauthorized' });
         
         // vérifier que la collection existe et que l'utilisateur en est le propriétaire

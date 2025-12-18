@@ -9,7 +9,11 @@ export const createFlashCardSchema = z.object({
     textBack: z.string()
         .min(1, 'Le text avant doit au moins avoir 1 caractère')
         .max(510, 'Le text avant ne peut pas dépasser 510 caractères'),
-        
+
+    collectionID: z.string().uuid('ID de collection invalide'),
+
+    URLFront: z.string().url().optional(),
+    URLBack: z.string().url().optional(),
 });
 
 export const questionIdSchema = z.object({

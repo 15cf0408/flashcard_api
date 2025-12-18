@@ -17,7 +17,7 @@ const router = express.Router();
 router.use(authenticate);
 
 // Create a flashcard
-router.post('/', validateBody(createFlashCardSchema), createFlashCard);
+router.post('/create', validateBody(createFlashCardSchema), createFlashCard);
 
 // List flashcards for a collection
 router.get('/collection/:collectionId', listFlashCardsByCollection);
@@ -29,10 +29,10 @@ router.get('/collection/:collectionId/due', getDueFlashCards);
 router.get('/:id', getFlashCardById);
 
 // Update a flashcard
-router.put('/:id', validateBody(updateFlashCardSchema), updateFlashCard);
+router.put('/update/:id', validateBody(updateFlashCardSchema), updateFlashCard);
 
 // Delete a flashcard
-router.delete('/:id', deleteFlashCard);
+router.delete('/delete/:id', deleteFlashCard);
 
 // Review a flashcard (record result)
 router.post('/:id/review', validateBody(reviewFlashCardSchema), reviewFlashCard);
