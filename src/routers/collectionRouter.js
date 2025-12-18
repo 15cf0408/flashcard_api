@@ -14,11 +14,11 @@ import { createCollectionSchema, updateCollectionSchema } from '../models/collec
 const router = express.Router();
 
 router.use(authenticate);
-router.post('/', validateBody(createCollectionSchema), createCollection);
+router.post('/create', validateBody(createCollectionSchema), createCollection);
 router.get('/my', getMyCollections);
 router.get('/search', searchPublicCollections);
 router.get('/:id', getCollectionById);
-router.put('/:id', validateBody(updateCollectionSchema), updateCollection);
-router.delete('/:id', deleteCollection);
+router.put('/update/:id', validateBody(updateCollectionSchema), updateCollection);
+router.delete('/delete/:id', deleteCollection);
 
 export default router;
