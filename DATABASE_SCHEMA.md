@@ -25,11 +25,6 @@ CREATE TABLE collection (
     FOREIGN KEY (owner_id) REFERENCES user(id) ON DELETE CASCADE
 );
 
--- Index pour améliorer les performances des recherches
-CREATE INDEX idx_collection_owner ON collection(owner_id);
-CREATE INDEX idx_collection_public ON collection(is_public);
-CREATE INDEX idx_collection_title ON collection(title);
-
 -- Table des flashcards
 CREATE TABLE flashcard (
     id TEXT PRIMARY KEY,
@@ -41,8 +36,6 @@ CREATE TABLE flashcard (
     FOREIGN KEY (collection_id) REFERENCES collection(id) ON DELETE CASCADE
 );
 
--- Index pour améliorer les performances
-CREATE INDEX idx_flashcard_collection ON flashcard(collection_id);
 
 -- Table de suivi des révisions (répétition espacée)
 CREATE TABLE study (
@@ -58,12 +51,7 @@ CREATE TABLE study (
     UNIQUE(user_id, flashcard_id)      -- Un utilisateur ne peut avoir qu'une seule entrée par flashcard
 );
 
--- Index pour améliorer les performances des requêtes de révision
-CREATE INDEX idx_study_user ON study(user_id);
-CREATE INDEX idx_study_flashcard ON study(flashcard_id);
-CREATE INDEX idx_study_next ON study(next_study);
-CREATE INDEX idx_study_user_flashcard ON study(user_id, flashcard_id);
-```
+
 
 ## Diagramme Entité-Relation (ASCII)
 
