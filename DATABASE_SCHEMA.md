@@ -218,21 +218,3 @@ FROM flashcard f
 LEFT JOIN study s ON s.flashcard_id = f.id AND s.user_id = ?
 WHERE f.collection_id = ?;
 ```
-
-## Notes de Performance
-
-### Index créés
-- `collection.owner_id` : Pour lister rapidement les collections d'un utilisateur
-- `collection.is_public` : Pour filtrer les collections publiques
-- `collection.title` : Pour les recherches par titre
-- `flashcard.collection_id` : Pour lister les flashcards d'une collection
-- `study.user_id` : Pour les révisions d'un utilisateur
-- `study.flashcard_id` : Pour les révisions d'une flashcard
-- `study.next_study` : Pour trouver les flashcards dues
-- `study(user_id, flashcard_id)` : Index composite pour les requêtes de progression
-
-### Optimisations possibles
-1. Ajouter un champ `created_at` sur `user` pour trier par date de création
-2. Ajouter un champ `updated_at` sur `collection` et `flashcard`
-3. Ajouter des index full-text sur `title` et `description` pour la recherche
-4. Créer une vue matérialisée pour les statistiques de progression
