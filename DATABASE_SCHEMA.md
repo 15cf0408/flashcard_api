@@ -25,6 +25,11 @@ CREATE TABLE collection (
     FOREIGN KEY (owner_id) REFERENCES user(id) ON DELETE CASCADE
 );
 
+-- Index pour améliorer les performances des recherches sur collections
+CREATE INDEX idx_collection_owner ON collection(owner_id);
+CREATE INDEX idx_collection_public ON collection(is_public);
+CREATE INDEX idx_collection_title ON collection(title);
+
 -- Table des flashcards
 CREATE TABLE flashcard (
     id TEXT PRIMARY KEY,
@@ -36,6 +41,8 @@ CREATE TABLE flashcard (
     FOREIGN KEY (collection_id) REFERENCES collection(id) ON DELETE CASCADE
 );
 
+-- Index pour améliorer les performances
+CREATE INDEX idx_flashcard_collection ON flashcard(collection_id);
 
 -- Table de suivi des révisions (répétition espacée)
 CREATE TABLE study (
@@ -47,7 +54,13 @@ CREATE TABLE study (
     last_study INTEGER NOT NULL,       -- Timestamp de la dernière révision
     next_study INTEGER NOT NULL,       -- Timestamp de la prochaine révision
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (flashcard_id) REFERENCES flashcard(id) ON DELETE CASCADE,
+  
+
+-- Index pour améliorer les performances des requêtes de révision
+CREATE INDEX idx_study_user ON study(user_id);
+CREATE INDEX idx_study_flashcard ON study(flashcard_id);
+CREATE INDEX idx_study_next ON study(next_study);
+CREATE INDEX idx_study_user_flashcard ON study(user_id, flashcard_id);  FOREIGN KEY (flashcard_id) REFERENCES flashcard(id) ON DELETE CASCADE,
     UNIQUE(user_id, flashcard_id)      -- Un utilisateur ne peut avoir qu'une seule entrée par flashcard
 );
 
@@ -206,3 +219,28 @@ FROM flashcard f
 LEFT JOIN study s ON s.flashcard_id = f.id AND s.user_id = ?
 WHERE f.collection_id = ?;
 ```
+
+## Notes de Performance
+
+### Index créés
+
+Les index suivants ont été créés pour optimiser les performances des requêtes :
+
+**Table `collection` :**
+- `idx_collection_owner` sur `owner_id` : Pour lister rapidement les collections d'un utilisateur
+- `idx_collection_public` sur `is_public` : Pour filtrer les collections publiques
+- `idx_collection_title` sur `title` : Pour les recherches par titre
+
+**Table `flashcard` :**
+- `idx_flashcard_collection` sur `collection_id` : Pour lister les flashcards d'une collection
+
+**Table `study` :**
+- `idx_study_user` sur `user_id` : Pour les révisions d'un utilisateur
+- `idx_study_flashcard` sur `flashcard_id` : Pour les révisions d'une flashcard
+- `idx_study_next` sur `next_study` : Pour trouver les flashcards dues
+- `idx_study_user_flashcard` sur `(user_id, flashcard_id)` : Index composite pour les requêtes de progression
+
+### Contrainte unique
+
+**Table `study` :**
+- `UNIQUE(user_id, flashcard_id)` : Garantit qu'un utilisateur ne peut avoir qu'une seule entrée de progression par flashcard

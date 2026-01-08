@@ -1,4 +1,4 @@
-import { sqliteTable, integer, text } from "drizzle-orm/sqlite-core"
+import { sqliteTable, integer, text, index, unique } from "drizzle-orm/sqlite-core"
 import { randomUUID } from "crypto"
 
 export const user = sqliteTable("user", {
@@ -16,7 +16,11 @@ export const collection = sqliteTable("collection", {
     title: text("title", { length: 100 }).notNull(),
     description: text("description", { length: 500 }).notNull(),
     is_public: integer("is_public", { mode: "boolean" }).notNull().default(true)
-})
+}, (table) => ({
+    ownerIdx: index("idx_collection_owner").on(table.owner_id),
+    publicIdx: index("idx_collection_public").on(table.is_public),
+    titleIdx: index("idx_collection_title").on(table.title)
+}))
 
 export const flashcard = sqliteTable("flashcard", {
     id: text("id").primaryKey().$defaultFn(() => randomUUID()),
@@ -25,7 +29,9 @@ export const flashcard = sqliteTable("flashcard", {
     back_side: text("back_side", { length: 1000 }).notNull(),
     front_url: text("front_url", { length: 200 }),
     back_url: text("back_url", { length: 200 })
-})
+}, (table) => ({
+    collectionIdx: index("idx_flashcard_collection").on(table.collection_id)
+}))
 
 export const study = sqliteTable("study", {
     id: text("id").primaryKey().$defaultFn(() => randomUUID()),
@@ -35,4 +41,10 @@ export const study = sqliteTable("study", {
     created_at: integer("created_at").notNull().default(() => Date.now()),
     last_study: integer("last_study").notNull().default(() => Date.now()),
     next_study: integer("next_study").notNull().default(() => Date.now() + (Math.pow(2, this.level - 1) * 24 * 60 * 60 * 1000))
-})
+}, (table) => ({
+    userIdx: index("idx_study_user").on(table.user_id),
+    flashcardIdx: index("idx_study_flashcard").on(table.flashcard_id),
+    nextStudyIdx: index("idx_study_next").on(table.next_study),
+    userFlashcardIdx: index("idx_study_user_flashcard").on(table.user_id, table.flashcard_id),
+    uniqueUserFlashcard: unique("unique_user_flashcard").on(table.user_id, table.flashcard_id)
+}))
