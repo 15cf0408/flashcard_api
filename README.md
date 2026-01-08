@@ -140,26 +140,6 @@ Le système utilise 5 niveaux de répétition :
 
 Voir le schéma détaillé dans [API_DOCUMENTATION.md](./API_DOCUMENTATION.md#schéma-de-la-base-de-données)
 
-## 🎨 Frontend React
-
-L'API est prête pour être utilisée avec un frontend React ! 
-
-**Guide complet disponible :** [FRONTEND_GUIDE.md](./FRONTEND_GUIDE.md)
-
-Fonctionnalités prêtes pour le frontend :
-- ✅ **CORS configuré** pour `http://localhost:5173` (Vite)
-- ✅ **Routes de statistiques** (`/stats/dashboard`, `/stats/collection/:id`)
-- ✅ **JWT** prêt pour localStorage
-- ✅ **Toutes les routes** documentées avec exemples
-
-Démarrage rapide :
-```bash
-npm create vite@latest flashcard-frontend -- --template react
-cd flashcard-frontend
-npm install axios react-router-dom
-```
-
-Voir le guide complet avec services API, exemples de pages et composants React dans [FRONTEND_GUIDE.md](./FRONTEND_GUIDE.md)
 
 ## 👥 Auteurs
 
