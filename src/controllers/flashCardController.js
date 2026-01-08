@@ -4,9 +4,12 @@ import { eq, and, lt } from 'drizzle-orm';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+// Système de répétition espacée selon les exigences
+// Niveau 1: 1 jour, Niveau 2: 2 jours, Niveau 3: 4 jours, Niveau 4: 8 jours, Niveau 5: 16 jours
 const computeNextStudy = (level) => {
     const now = Date.now();
-    return now + Math.pow(2, Math.max(0, level - 1)) * DAY_MS;
+    const clampedLevel = Math.max(1, Math.min(5, level)); // Limiter entre 1 et 5
+    return now + Math.pow(2, clampedLevel - 1) * DAY_MS;
 };
 
 export const createFlashCard = async (req, res) => {
@@ -95,15 +98,26 @@ export const getDueFlashCards = async (req, res) => {
 
         const now = Date.now();
 
-        // join study and flashcard for this user where next_study <= now
-        const q = await db.select({ f: flashcard, s: study })
-            .from(flashcard)
-            .leftJoin(study, eq(study.flashcard_id, flashcard.id))
-            .where(and(eq(flashcard.collection_id, collectionId), eq(study.user_id, userId), lt(study.next_study, now)));
-
-        // q will be array of joined rows; map to flashcard objects
-        const due = q.map(row => row.f);
-        res.status(200).json({ count: due.length, flashcards: due });
+        // Récupérer toutes les flashcards de la collection
+        const allCards = await db.select().from(flashcard).where(eq(flashcard.collection_id, collectionId));
+        
+        // Pour chaque flashcard, vérifier si elle a une entrée study pour cet utilisateur
+        const dueCards = [];
+        for (const card of allCards) {
+            const studies = await db.select()
+                .from(study)
+                .where(and(eq(study.flashcard_id, card.id), eq(study.user_id, userId)));
+            
+            if (studies.length === 0) {
+                // Pas encore étudiée = à réviser
+                dueCards.push(card);
+            } else if (studies[0].next_study <= now) {
+                // Date de révision dépassée
+                dueCards.push(card);
+            }
+        }
+        
+        res.status(200).json({ count: dueCards.length, flashcards: dueCards });
     } catch (error) {
         console.error('getDueFlashCards error', error);
         res.status(500).json({ error: 'Server error while retrieving due flashcards' });
@@ -192,9 +206,9 @@ export const reviewFlashCard = async (req, res) => {
         // update level depending on correctness
         let newLevel = s.level || 1;
         if (correct) {
-            newLevel = Math.min(newLevel + 1, 20);
+            newLevel = Math.min(newLevel + 1, 5); // Maximum niveau 5
         } else {
-            newLevel = 1;
+            newLevel = 1; // Retour au niveau 1 si incorrect
         }
 
         const now = Date.now();
