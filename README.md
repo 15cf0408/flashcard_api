@@ -110,6 +110,10 @@ La documentation complète de l'API (endpoints, authentification, schéma de bas
 - `GET /admin/users/:id` - Consulter un utilisateur
 - `DELETE /admin/users/:id` - Supprimer un utilisateur
 
+#### Statistiques (nouveau !)
+- `GET /stats/dashboard` - Statistiques du tableau de bord
+- `GET /stats/collection/:id` - Statistiques d'une collection
+
 ## 🎯 Système de répétition espacée
 
 Le système utilise 5 niveaux de répétition :
@@ -135,6 +139,27 @@ Le système utilise 5 niveaux de répétition :
 - **study** : Suivi de la progression de révision (niveau, dates de révision)
 
 Voir le schéma détaillé dans [API_DOCUMENTATION.md](./API_DOCUMENTATION.md#schéma-de-la-base-de-données)
+
+## 🎨 Frontend React
+
+L'API est prête pour être utilisée avec un frontend React ! 
+
+**Guide complet disponible :** [FRONTEND_GUIDE.md](./FRONTEND_GUIDE.md)
+
+Fonctionnalités prêtes pour le frontend :
+- ✅ **CORS configuré** pour `http://localhost:5173` (Vite)
+- ✅ **Routes de statistiques** (`/stats/dashboard`, `/stats/collection/:id`)
+- ✅ **JWT** prêt pour localStorage
+- ✅ **Toutes les routes** documentées avec exemples
+
+Démarrage rapide :
+```bash
+npm create vite@latest flashcard-frontend -- --template react
+cd flashcard-frontend
+npm install axios react-router-dom
+```
+
+Voir le guide complet avec services API, exemples de pages et composants React dans [FRONTEND_GUIDE.md](./FRONTEND_GUIDE.md)
 
 ## 👥 Auteurs
 
